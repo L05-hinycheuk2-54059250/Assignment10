@@ -1,0 +1,223 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.6/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.16/addons/p5.sound.js"></script>
+    <script>
+        var x = [];
+        var y = [];
+        var size = [];
+        var c = 0;
+
+        var bx = [];
+        var by = [];
+
+        var xspeed = [];
+        var yspeed = [];
+
+        var bxspeed = [];
+        var byspeed = [];
+
+        var soundA;
+        var soundB;
+
+        var circleLine = 60;
+
+        var run = true;
+
+        function preload() {
+            soundA = loadSound('128833__mtcband__chord-7.wav');
+            soundB = loadSound('183099__dwsd__bd-bodacious.wav');
+        }
+
+
+        function setup() {
+            createCanvas(600, 300);
+
+            frameRate(10);
+
+            x[0] = 100;
+            y[0] = 80;
+            size[0] = 70;
+
+            bx[0] = 450;
+            by[0] = 50;
+
+            xspeed[0] = random(3, 8);
+            yspeed[0] = random(3, 8);
+
+            bxspeed[0] = random(3, 8);
+            byspeed[0] = random(3, 8);
+
+            run = true;
+
+        }
+
+        function draw() {
+            background(200);
+            moveornot();
+
+            fill(0);
+            textSize(10);
+            text("1. when white touches black, black will make sound once.", 10, 275);
+            text("2. when pressed mouse, black will stick to white and play sound in loop.", 10, 290);
+
+            mainCircle();
+            soundCircle();
+            soundBox();
+
+
+            hit();
+
+        }
+
+        function mainCircle() {
+          strokeWeight(1);
+          stroke(255);
+          noFill();
+          ellipse(mouseX, mouseY, circleLine, circleLine)
+
+          if (circleLine == 80 || circleLine == 0) {
+              circleLine = circleLine * -1;
+          }
+          circleLine ++;
+
+
+            noStroke();
+            fill(255);
+            ellipse(mouseX, mouseY, 60, 60);
+
+
+        }
+
+        function soundCircle() {
+            noStroke();
+            fill(0);
+            ellipse(x, y, 70, 70);
+
+        }
+
+        function soundBox() {
+            noStroke();
+            fill(c);
+            rect(bx, by, 70, 70);
+        }
+
+
+        function mouseDragged() {
+            moveornot();
+
+            x[0] = mouseX;
+            y[0] = mouseY;
+
+            bx[0] = mouseX - 35;
+            by[0] = mouseY - 35;
+
+            c = 255
+
+            run = false;
+
+        }
+
+
+
+        function mouseReleased() {
+            run = true;
+            moveornot();
+
+            c = 0;
+        }
+
+        function moveornot() {
+            if (run == true) {
+                move();
+                for (var i = 0; i < x.length; i++) {
+                    x[i] += xspeed[i];
+                    y[i] += yspeed[i];
+                }
+            } else if (run == false) {
+
+                run = true;
+
+            }
+        }
+
+
+        function move() {
+            run = true;
+            bounce();
+            for (var i = 0; i < x.length; i++) {
+                x[i] += xspeed[i];
+                y[i] += yspeed[i];
+            }
+
+            for (var i = 0; i < bx.length; i++) {
+                bx[i] += bxspeed[i];
+                by[i] += byspeed[i];
+            }
+        }
+
+        function bounce() {
+
+            for (var i = 0; i < x.length; i++) {
+                if (x[i] < size[i] - 20) {
+                    x[i] = size[i] - 20;
+                    xspeed[i] *= -1;
+                } else if (x[i] > width - size[i] + 50) {
+                    x[i] = width - size[i] + 50;
+                    xspeed[i] *= -1;
+                }
+
+                if (y[i] < size[i] - 30) {
+                    y[i] = size[i] - 30;
+                    yspeed[i] *= -1;
+                } else if (y[i] > height - size[i] + 30) {
+                    y[i] = height - size[i] + 30;
+                    yspeed[i] *= -1;
+                }
+
+                for (var i = 0; i < bx.length; i++) {
+                    if (bx[i] < size[i] - 60) {
+                        bx[i] = size[i] - 60;
+                        bxspeed[i] *= -1;
+                    } else if (bx[i] > width - size[i]) {
+                        bx[i] = width - size[i];
+                        bxspeed[i] *= -1;
+                    }
+
+                    if (by[i] < size[i] - 70) {
+                        by[i] = size[i] - 70;
+                        byspeed[i] *= -1;
+                    } else if (by[i] > height - size[i] + 10) {
+                        by[i] = height - size[i] + 10;
+                        byspeed[i] *= -1;
+                    }
+
+                }
+            }
+        }
+
+        function hit() {
+            for (var i = 0; i < x.length; i++) {
+                if ((x[i] > mouseX - 60) && (x[i] < mouseX + 60) && (y[i] > mouseY - 60) &&
+                    (y[i] < mouseY + 60)) {
+                    soundA.loop();
+                } else {
+                    soundA.stop();
+                }
+            }
+
+            for (var i = 0; i < bx.length; i++) {
+                if ((bx[i] > mouseX - 60) && (bx[i] < mouseX + 60) && (by[i] > mouseY - 60) &&
+                    (by[i] < mouseY + 60)) {
+                    soundB.loop();
+                } else {
+                    soundB.stop();
+                }
+            }
+        }
+    </script>
+</head>
+
+</html>
